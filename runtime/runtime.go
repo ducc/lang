@@ -2,6 +2,7 @@ package runtime
 
 import (
 	"github.com/ducc/lang/lang"
+	"github.com/ducc/lang/util"
 	"go.uber.org/zap"
 )
 
@@ -18,6 +19,6 @@ func Run(logger *zap.SugaredLogger, definedFunctions []lang.DefineFunction) erro
 		return err
 	}
 
-	function.Invoke(NewStack())
+	function.Invoke(util.NewStack())
 	return nil
 }

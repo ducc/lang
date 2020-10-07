@@ -4,10 +4,11 @@ import (
 	"fmt"
 
 	"github.com/ducc/lang/lang"
+	"github.com/ducc/lang/util"
 	"go.uber.org/zap"
 )
 
-type Step func(stack *Stack)
+type Step func(stack *util.Stack)
 
 type Function struct {
 	steps []Step
@@ -17,7 +18,7 @@ func NewFunction(steps []Step) *Function {
 	return &Function{steps: steps}
 }
 
-func (f *Function) Invoke(stack *Stack) {
+func (f *Function) Invoke(stack *util.Stack) {
 	for _, step := range f.steps {
 		step(stack)
 	}
@@ -57,7 +58,7 @@ func (r *FunctionRegistry) Register(definition lang.DefineFunction) error {
 
 		switch instruction.InstructionType() {
 		case lang.InstructionTypeDefineInt64:
-			steps = append(steps, func(stack *Stack) {
+			steps = append(steps, func(stack *util.Stack) {
 				r.logger.Debugf("%s %s", instruction, stack)
 				stack.Push(instruction.DefineInt64().Value) // todo should we be pushing the actual value or a wrapper to the stack?
 			})
@@ -67,7 +68,7 @@ func (r *FunctionRegistry) Register(definition lang.DefineFunction) error {
 				return err
 			}
 
-			steps = append(steps, func(stack *Stack) {
+			steps = append(steps, func(stack *util.Stack) {
 				r.logger.Debugf("%s %s", instruction, stack)
 				function.Invoke(stack)
 			})
@@ -89,7 +90,7 @@ func (r *FunctionRegistry) Register(definition lang.DefineFunction) error {
 				return fmt.Errorf("getting condition false function: %w", err)
 			}
 
-			steps = append(steps, func(stack *Stack) {
+			steps = append(steps, func(stack *util.Stack) {
 				r.logger.Debugf("%s %s", instruction, stack)
 				conditionFunction.Invoke(stack)
 

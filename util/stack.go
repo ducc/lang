@@ -1,4 +1,4 @@
-package runtime
+package util
 
 import (
 	"errors"
@@ -34,4 +34,12 @@ func (s *Stack) Pop() (interface{}, error) {
 	top := s.inner[len(s.inner)-1]
 	s.inner = s.inner[:len(s.inner)-1]
 	return top, nil
+}
+
+func (s *Stack) Get(idx int) (interface{}, error) {
+	if len(s.inner) < idx+1 {
+		return nil, errors.New("stack idx out of bounds")
+	}
+
+	return s.inner[idx], nil
 }

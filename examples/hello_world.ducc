@@ -1,35 +1,27 @@
 
 D =
 | i64(68)
-| push
 
 E =
 | i64(69)
-| push
 
 H =
 | i64(72)
-| push
 
 L =
 | i64(76)
-| push
 
 O =
 | i64(79)
-| push
 
 R =
 | i64(82)
-| push
 
 W =
 | i64(87)
-| push
 
 space =
 | i64(8194)
-| push
 
 hello =
 | H
@@ -45,9 +37,13 @@ world =
 | L
 | D
 
-main =
+helloWorld =
 | hello
 | space
 | world
+
+main =
+| helloWorld
+| i64(11)
 | printascii
 
