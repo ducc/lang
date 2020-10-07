@@ -1,0 +1,36 @@
+E =
+| i64(69)
+
+N =
+| i64(78)
+
+O =
+| i64(79)
+
+S =
+| i64(83)
+
+Y =
+| i64(89)
+
+# prints the word 'YES'
+printYES =
+| Y
+| E
+| S
+| i64(3)
+| printascii
+
+# prints the word 'NO'
+printNO =
+| N
+| O
+| i64(2)
+| printascii
+
+# if 1 is equal to 2, print 'YES', otherwise print 'NO'
+main =
+| i64(1)
+| i64(2)
+| equal ? printYES : printNO
+

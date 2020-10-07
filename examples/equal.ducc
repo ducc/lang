@@ -1,0 +1,7 @@
+
+main =
+| i64(1)
+| i64(1)
+| equal
+| print
+

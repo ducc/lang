@@ -3,7 +3,7 @@ package runtime
 import (
 	"fmt"
 
-	"github.com/ducc/lang/lang"
+	"github.com/ducc/lang/parser"
 	"github.com/ducc/lang/util"
 	"go.uber.org/zap"
 )
@@ -47,7 +47,7 @@ func (r *FunctionRegistry) Function(name string) (*Function, error) {
 	return function, nil
 }
 
-func (r *FunctionRegistry) Register(definition lang.DefineFunction) error {
+func (r *FunctionRegistry) Register(definition parser.DefineFunction) error {
 	name := definition.Name
 	r.logger.Debugf("registering '%s'", name)
 
@@ -57,12 +57,12 @@ func (r *FunctionRegistry) Register(definition lang.DefineFunction) error {
 		instruction := instruction
 
 		switch instruction.InstructionType() {
-		case lang.InstructionTypeDefineInt64:
+		case parser.InstructionTypeDefineInt64:
 			steps = append(steps, func(stack *util.Stack) {
 				r.logger.Debugf("%s %s", instruction, stack)
 				stack.Push(instruction.DefineInt64().Value) // todo should we be pushing the actual value or a wrapper to the stack?
 			})
-		case lang.InstructionTypeCallFunction:
+		case parser.InstructionTypeCallFunction:
 			function, err := r.Function(instruction.CallFunction().Name)
 			if err != nil {
 				return err
@@ -72,7 +72,7 @@ func (r *FunctionRegistry) Register(definition lang.DefineFunction) error {
 				r.logger.Debugf("%s %s", instruction, stack)
 				function.Invoke(stack)
 			})
-		case lang.InstructionTypeConditional:
+		case parser.InstructionTypeConditional:
 			instruction := instruction.Conditional()
 
 			conditionFunction, err := r.Function(instruction.ConditionFunction.Name)

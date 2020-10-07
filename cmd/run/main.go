@@ -2,11 +2,10 @@ package main
 
 import (
 	"flag"
-	"fmt"
 
 	"io/ioutil"
 
-	"github.com/ducc/lang/lang"
+	"github.com/ducc/lang/parser"
 	"github.com/ducc/lang/runtime"
 	"go.uber.org/zap"
 )
@@ -35,14 +34,10 @@ func main() {
 		sugar.With("error", err).Fatal("unable to read file")
 	}
 
-	_ = fileData
-
-	definitions, err := lang.ParseFunctionDefinitions(string(fileData))
+	definitions, err := parser.ParseFunctionDefinitions(string(fileData))
 	if err != nil {
 		sugar.With("error", err).Fatal("parsing function definitions")
 	}
-
-	fmt.Println(definitions)
 
 	if err := runtime.Run(sugar, definitions); err != nil {
 		sugar.With("error", err).Fatal("unable to run runtime")
