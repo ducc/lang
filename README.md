@@ -1,1 +1,1 @@
-# lang - An Amazing Project
+# ducclang - An Amazing Project
