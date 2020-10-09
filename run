@@ -1,2 +1,0 @@
-go run cmd/run/main.go --f examples/add.ducc 
-
