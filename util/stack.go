@@ -36,8 +36,8 @@ func (s *Stack) Pop() (interface{}, error) {
 	return top, nil
 }
 
-func (s *Stack) Get(idx int) (interface{}, error) {
-	if len(s.inner) < idx+1 {
+func (s *Stack) Get(idx int64) (interface{}, error) {
+	if int64(len(s.inner)) < idx+1 {
 		return nil, errors.New("stack idx out of bounds")
 	}
 

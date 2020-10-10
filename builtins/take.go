@@ -12,7 +12,7 @@ func Take(stack *util.Stack) {
 		panic(fmt.Sprintf("unable to pop b value for take function: %v", err))
 	}
 
-	value, err := stack.Get(idx.(int))
+	value, err := stack.Get(idx.(int64))
 	if err != nil {
 		panic(fmt.Sprintf("unable to pop a value for take function: %v", err))
 	}
