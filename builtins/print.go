@@ -6,11 +6,8 @@ import (
 	"github.com/ducc/lang/util"
 )
 
-func Print(stack *util.Stack) {
-	v, err := stack.Pop()
-	if err != nil {
-		panic(fmt.Sprintf("unable to pop for print function: %v", err))
-	}
-
+func Print(scope *util.Scope) *util.Scope {
+	v, scope := scope.PopStack()
 	fmt.Println(v)
+	return scope
 }

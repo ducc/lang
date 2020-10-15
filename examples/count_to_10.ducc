@@ -1,0 +1,66 @@
+#main
+#| 1
+#| | 1
+#| | | EQ
+#| | | | itsTrue $itsTrue
+#| | | | | !itsTrue
+#| | | | | | IfTrue
+#| | | | itsFalse $itsFalse
+#| | | | | !itsFalse
+#| | | | | | IfFalse
+
+main
+| counter 1
+| | countTo10
+
+countTo10
+| !counter
+| | 10
+| | | EQ
+| | | | addAndStore $addAndStore
+| | | | | !addAndStore
+| | | | | | IfFalse
+| | | | printResult $printResult
+| | | | | !printResult
+| | | | | | IfTrue
+
+add1
+| !counter
+| | 1
+| | | add
+
+addAndStore
+| counter add1
+| | countTo10
+
+printResult
+| !counter
+| | print
+
+func EQ(scope *util.Scope) *util.Scope {
+        bVal, scope := scope.PopStack()
+        aVal, scope := scope.PopStack()
+        return scope.PushStack(aVal == bVal)
+}
+
+func IfTrue(scope *util.Scope) *util.Scope {
+        fVal, scope := scope.PopStack()
+        fun := fVal.(func(*util.Scope) *util.Scope)
+        bVal, scope := scope.PopStack()
+        boo := bVal.(bool)
+        if boo {
+                fun(scope)
+        }
+        return scope
+}
+
+func IfFalse(scope *util.Scope) *util.Scope {
+        fVal, scope := scope.PopStack()
+        fun := fVal.(func(*util.Scope) *util.Scope)
+        bVal, scope := scope.PopStack()
+        boo := bVal.(bool)
+        if !boo {
+                fun(scope)
+        }
+        return scope
+}

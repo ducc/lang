@@ -13,16 +13,19 @@ import (
 var (
 	inputFile  string
 	outputFile string
+	debug bool 
 )
 
 func init() {
 	flag.StringVar(&inputFile, "f", "", "file to run")
 	flag.StringVar(&outputFile, "o", "output.go", "where to write compiled go")
+	flag.BoolVar(&debug, "debug", true, "enable debug logging in output file")
 }
 
 func main() {
 	flag.Parse()
 	logger, _ := zap.NewDevelopment()
+	zap.ReplaceGlobals(logger)
 	defer logger.Sync()
 
 	sugar := logger.Sugar()
@@ -40,12 +43,12 @@ func main() {
 		sugar.With("error", err).Fatal("unable to read file")
 	}
 
-	definitions, err := parser.ParseFunctionDefinitions(string(fileData))
+	definitions, err := parser.ParseFunctions(string(fileData))
 	if err != nil {
 		sugar.With("error", err).Fatal("parsing function definitions")
 	}
 
-	outputReader, err := compiler.New(sugar).Compile(definitions)
+	outputReader, err := compiler.New(sugar, debug).Compile(definitions)
 	if err != nil {
 		sugar.With("error", err).Fatal("unable to compile")
 	}

@@ -1,0 +1,16 @@
+package builtins
+
+import (
+	"fmt"
+
+	"github.com/ducc/lang/util"
+)
+
+func Pop(stack *util.Stack) {
+	val, err := stack.Pop()
+	if err != nil {
+		panic(fmt.Sprintf("unable to pop b value for take function: %v", err))
+	}
+
+	stack.Push(val)
+}

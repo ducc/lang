@@ -1,16 +1,22 @@
 package compiler
 
-const header = `// auto generated - changes will not be persisted
-package main 
+func WriteHeader(buf *buffer, imports []string) {
+	buf.write("// auto generated - changes will not be persisted")
+	buf.write("package main")
+	buf.write("import (")
+    buf.write("\"fmt\"")
+    buf.write("\"github.com/ducc/lang/util\"")
+    buf.write("\"github.com/ducc/lang/builtins\"")
+	buf.write("\"go.uber.org/zap\"")
+	for _, i := range imports {
+		buf.writef("\"%s\"", i)
+	}
+	buf.write(")")
 
-import (
-        "fmt"
-        "github.com/ducc/lang/util"
-        "github.com/ducc/lang/builtins"
-)
+	buf.write("// incase imports are not used")
+	buf.write("var _ = fmt.Println")
+	buf.write("var _ = util.NewScope")
+	buf.write("var _ = builtins.Add")
+	buf.write("var _ = zap.S")
+}
 
-// incase imports are not used
-var _ = fmt.Println
-var _ = util.NewStack
-var _ = builtins.Add
-`

@@ -1,7 +1,46 @@
+main
+| 1
+| | 1
+| | | EQ
+| | | | itsTrue $itsTrue
+| | | | | !itsTrue
+| | | | | | IfTrue
+| | | | itsFalse $itsFalse
+| | | | | !itsFalse
+| | | | | | IfFalse
 
-main =
-| i64(1)
-| i64(1)
-| equal
+itsTrue
+| "IT IS TRUE!"
 | print
 
+itsFalse
+| "IT IS FALSE!"
+| print
+
+func EQ(scope *util.Scope) *util.Scope {
+        bVal, scope := scope.PopStack()
+        aVal, scope := scope.PopStack()
+        return scope.PushStack(aVal == bVal)
+}
+
+func IfTrue(scope *util.Scope) *util.Scope {
+        fVal, scope := scope.PopStack()
+        fun := fVal.(func(*util.Scope) *util.Scope)
+        bVal, scope := scope.PopStack()
+        boo := bVal.(bool)
+        if boo {
+                fun(scope)
+        }
+        return scope
+}
+
+func IfFalse(scope *util.Scope) *util.Scope {
+        fVal, scope := scope.PopStack()
+        fun := fVal.(func(*util.Scope) *util.Scope)
+        bVal, scope := scope.PopStack()
+        boo := bVal.(bool)
+        if !boo {
+                fun(scope)
+        }
+        return scope
+}

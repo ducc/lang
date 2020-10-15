@@ -1,0 +1,117 @@
+import
+| "os"
+| "github.com/bwmarrin/discordgo"
+
+main
+| "STARTING"
+| | Log
+| getToken
+| | NewDiscord
+| | | processMessages
+
+getToken
+| "DISCORD_TOKEN"
+| | GetEnv
+
+processMessages
+| $nextMessage
+| | ExtractMessageAttrs
+| | | handleCommand
+| processMessages
+
+handleCommand
+| "!help"
+| | EQ
+| | | sendHelp $sendHelp
+| | | | !sendHelp
+| | | | | IfTrue
+| "!ping"
+| | EQ
+| | | sendPing $sendPing
+| | | | !sendPing
+| | | | | IfTrue
+
+sendHelp
+| "Commands: !help, !ping"
+| | SendMessage
+
+sendPing
+| "Pong!"
+| | SendMessage
+
+func GetEnv(scope *util.Scope) *util.Scope {
+	val, scope := scope.PopStack()
+	envvar := os.Getenv(val.(string))
+	return scope.PushStack(envvar)
+}
+func Log(scope *util.Scope) *util.Scope {
+	val, scope := scope.PopStack()
+	zap.S().Info(val)
+	return scope
+}
+func NewDiscord(scope *util.Scope) *util.Scope {
+	token, scope := scope.PopStack()
+	dg, err := discordgo.New("Bot " + token.(string))
+	if err != nil {
+		panic(err)
+	}
+	queue := make(chan *discordgo.MessageCreate)
+	dg.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
+		queue <- m
+	})
+	dg.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuildMessages)
+	err = dg.Open()
+	if err != nil {
+		panic(err)
+	}
+	scope = scope.SetVar("discord", dg)
+	scope = scope.SetVar("nextMessage", func(scope *util.Scope) *util.Scope {
+		msg := <-queue
+		return scope.PushStack(msg)
+	})
+	return scope
+}
+func ExtractMessageAttrs(scope *util.Scope) *util.Scope {
+	value, scope := scope.PopStack()
+	mc := value.(*discordgo.MessageCreate)
+	content := mc.Content
+	scope = scope.SetVar("channelID", mc.ChannelID)
+	return scope.PushStack(content)
+}
+func SendMessage(scope *util.Scope) *util.Scope {
+	cVal, scope := scope.PopStack()
+	content := cVal.(string)
+	channelID := scope.GetVar("channelID").(string)
+	discord := scope.GetVar("discord").(*discordgo.Session)
+	zap.S().Info(channelID, content)
+	_, err := discord.ChannelMessageSend(channelID, content)
+	if err != nil {
+		panic(err)
+	}
+	return scope
+}
+func EQ(scope *util.Scope) *util.Scope {
+	bVal, scope := scope.PopStack()
+	aVal, scope := scope.PopStack()
+	return scope.PushStack(aVal == bVal)
+}
+func IfTrue(scope *util.Scope) *util.Scope {
+	fVal, scope := scope.PopStack()
+	fun := fVal.(func(*util.Scope) *util.Scope)
+	bVal, scope := scope.PopStack()
+	boo := bVal.(bool)
+	if boo {
+		fun(scope)
+	}
+	return scope
+}
+func IfFalse(scope *util.Scope) *util.Scope {
+	fVal, scope := scope.PopStack()
+	fun := fVal.(func(*util.Scope) *util.Scope)
+	bVal, scope := scope.PopStack()
+	boo := bVal.(bool)
+	if !boo {
+		fun(scope)
+	}
+	return scope
+}
