@@ -1,0 +1,45 @@
+# this doesnt work yet, i like how the orm built sql queries look e.g. 'getPets'
+
+import 
+| "github.com/ducc/lang/database/postgresql"
+| | Connect
+| "github.com/ducc/lang/database/orm"
+| | Query
+| | SELECT
+| | FROM
+| | WHERE
+| | EQUALS
+
+main
+| db setupDatabase
+| !db
+| | getUsers
+
+setupDatabase
+| "postgres://a@b:localhost:5678/database?insecure=true" | Connect
+
+getUsers
+| SELECT | "id" | "name" | FROM | "users" \
+| Query | readUsersRows
+
+readUsersRows
+| readUserRow 
+| $hasNextRow | readUserRows $readUserRows | !readUserRows | IfTrue
+
+readUserRow
+| $nextRow | userID !id | userName !name | !db | getPets
+
+getPets
+| SELECT | "breed" | "age" | FROM | "pets" | WHERE | "user_id" | EQUALS | !userID \
+| Query | readPetRows
+
+readPetRows
+| readPetRow
+| $hasNextRow | readPetRows $readPetRows | !readPetRows | IfTrue
+
+readPetRow
+| $nextRow | petBreed !breed | petAge !age | printUserDetails
+
+printUserDetails
+| !userName | "'s pet: " | concat | !petBreed | concat | "Age " | concat | !petAge | concat | print
+

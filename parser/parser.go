@@ -118,7 +118,6 @@ func functionTreeToInstructionTree(root *Node) DefineFunction {
 func parseInstruction(instruction string) Instruction {
 	if strings.HasPrefix(instruction, "\"") && strings.HasSuffix(instruction, "\"") {
 		// define string variable
-		// todo check the values are not wrapped in ""
 		return NewDefineString(instruction[1 : len(instruction)-1])
 	} else if intValue, err := strconv.ParseInt(instruction, 10, 64); err == nil {
 		// define int variable
