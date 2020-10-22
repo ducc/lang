@@ -13,7 +13,7 @@ import (
 var (
 	inputFile  string
 	outputFile string
-	debug bool 
+	debug      bool
 )
 
 func init() {
