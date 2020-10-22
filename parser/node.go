@@ -3,10 +3,10 @@ package parser
 import "fmt"
 
 type Node struct {
-	Parent      *Node
-	Instruction []string
+	Parent            *Node
+	Instruction       []string
 	ParsedInstruction Instruction
-	Children    []*Node
+	Children          []*Node
 }
 
 func newNode(instruction []string) *Node {
@@ -40,4 +40,13 @@ func (node *Node) Back(i int) *Node {
 		node = node.Parent
 	}
 	return node
+}
+
+func (n *Node) Last() *Node {
+	if len(n.Children) == 0 {
+		return n
+	}
+
+	lastChild := n.Children[len(n.Children)-1]
+	return lastChild.Last()
 }

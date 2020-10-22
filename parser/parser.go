@@ -145,11 +145,10 @@ func ParseFunctions(input string) ([]Instruction, error) {
 			continue
 		}
 
-		definedFunction := functionTreeToInstructionTree(tree)		
+		definedFunction := functionTreeToInstructionTree(tree)
 		fmt.Println(definedFunction.Node.Queue().String())
 		definedFunctions = append(definedFunctions, definedFunction)
 	}
 
 	return definedFunctions, nil
 }
-
